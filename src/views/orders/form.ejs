@@ -1,0 +1,57 @@
+<% layout('../layouts/main') -%>
+  <% block('title', "Заказ" ) -%>
+    <!DOCTYPE html>
+    <html lang="ru">
+
+    <head>
+      <meta charset="UTF-8">
+      <title>
+        <%= order.order_id ? 'Редактировать заказ' : 'Новый заказ' %>
+      </title>
+    </head>
+
+    <body>
+      <h1>
+        <%= order.order_id ? 'Редактировать заказ' : 'Новый заказ' %>
+      </h1>
+
+      <form method="POST" action="<%= action %>">
+        <label>Клиент:</label>
+        <select name="customer_id" required>
+          <% customers.forEach(c=> { %>
+            <option value="<%= c.customer_id %>" <%=order.customer_id===c.customer_id ? 'selected' : '' %>><%= c.name %>
+            </option>
+            <% }) %>
+        </select>
+        <br>
+
+        <label>Ресторан:</label>
+        <select name="restaurant_id" required>
+          <% restaurants.forEach(r=> { %>
+            <option value="<%= r.restaurant_id %>" <%=order.restaurant_id===r.restaurant_id ? 'selected' : '' %>><%=
+                r.name %>
+            </option>
+            <% }) %>
+        </select>
+        <br>
+
+        <label>Курьер:</label>
+        <select name="courier_id">
+          <option value="">—</option>
+          <% couriers.forEach(cr=> { %>
+            <option value="<%= cr.courier_id %>" <%=order.courier_id===cr.courier_id ? 'selected' : '' %>><%= cr.name %>
+            </option>
+            <% }) %>
+        </select>
+        <br>
+
+        <label>Статус:</label>
+        <input type="text" name="status" value="<%= order.status || '' %>" required>
+        <br>
+
+        <button type="submit">Сохранить</button>
+        <a href="/orders">Отмена</a>
+      </form>
+    </body>
+
+    </html>

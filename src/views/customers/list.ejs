@@ -1,0 +1,64 @@
+<% layout('../layouts/list-layout') -%>
+<% block('title', "Клиенты" ) -%>
+<% block('h1', "Список клиентов" ) -%>
+<% block('hrefAdd', "/customers/add" ) -%>
+<% block('linkAddText', "Добавить клиента" ) -%>
+<% block('messages', messages) -%>
+<% block('data', customers) -%>
+<% block('searchAction', "/customers" ) -%>
+<% block('hrefReset', '/customers' ) -%>
+              
+
+     <table border="1">
+      <thead>
+        <tr>
+          <%
+            const qs = (field) => {
+            const q = {...query, sortField: field,
+            sortOrder: query.sortField === field && query.sortOrder==='asc'
+            ? 'desc' : 'asc'};
+            return Object.entries(q)
+            .map(([k,v])=> `${k}=${encodeURIComponent(v)}`)
+            .join('&');
+            };
+            %>
+            <th><a href="/customers?<%= qs('customer_id') %>">ID</a></th>
+            <th><a href="/customers?<%= qs('email') %>">Email</a></th>
+            <th><a href="/customers?<%= qs('name') %>">Имя</a></th>
+            <th><a href="/customers?<%= qs('phone') %>">Телефон</a></th>
+            <th><a href="/customers?<%= qs('address') %>">Адрес</a></th>
+            <th><a href="/customers?<%= qs('registered_at') %>">Дата регистрац.</a></th>
+            <th>Действия</th>
+        </tr>
+      </thead>
+      <tbody>
+
+         <% customers.forEach(c=> { %>
+          <tr>
+            <td>
+              <%= c.customer_id %>
+            </td>
+            <td>
+              <%= c.email %>
+            </td>
+            <td>
+              <%= c.name %>
+            </td>
+            <td>
+              <%= c.phone %>
+            </td>
+            <td>
+              <%= c.address %>
+            </td>
+            <td>
+              <%= c.registered_at.toISOString().slice(0,19).replace('T',' ') %></td>
+<td>
+  <a href="/customers/edit/<%= c.customer_id %>">Ред.</a>
+  <form action="/customers/delete/<%= c.customer_id %>" method="POST" style="display:inline">
+    <button type="submit" onclick="return confirm(' Удалить клиента?')">Удал.</button>
+                </form>
+            </td>
+          </tr>
+          <% }) %>
+      </tbody>
+    </table>

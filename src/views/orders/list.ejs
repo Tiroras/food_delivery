@@ -1,0 +1,53 @@
+<% layout('../layouts/main') -%>
+  <% block('title', "Заказы" ) -%>
+
+    <h1>Список заказов</h1>
+    <% if (messages.length> 0) { %>
+      <ul>
+        <% messages.forEach(msg=> { %>
+          <li>
+            <%= msg %>
+          </li>
+          <% }); %>
+      </ul>
+      <% } %>
+        <a href="/orders/add">Добавить заказ</a>
+        <table border="1">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Клиент</th>
+              <th>Ресторан</th>
+              <th>Курьер</th>
+              <th>Статус</th>
+              <th>Действия</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% orders.forEach(order=> { %>
+              <tr>
+                <td>
+                  <%= order.order_id %>
+                </td>
+                <td>
+                  <%= order.customer_name %>
+                </td>
+                <td>
+                  <%= order.restaurant_name %>
+                </td>
+                <td>
+                  <%= order.courier_name || '—' %>
+                </td>
+                <td>
+                  <%= order.status %>
+                </td>
+                <td>
+                  <a href="/orders/edit/<%= order.order_id %>">Редактировать</a>
+                  <form method="POST" action="/orders/delete/<%= order.order_id %>" style="display:inline">
+                    <button type="submit" onclick="return confirm('Удалить заказ?')">Удалить</button>
+                  </form>
+                </td>
+              </tr>
+              <% }); %>
+          </tbody>
+        </table>

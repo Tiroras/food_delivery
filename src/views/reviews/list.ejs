@@ -1,0 +1,28 @@
+<% layout('../layouts/main') -%>
+  <% block('title', "Отзывы" ) -%>
+    <h1>Список отзывов</h1>
+    <a href="reviews/add">Добавить отзыв</a>
+    <ul>
+      <% reviews.forEach(r=> { %>
+        <li>
+          <div>
+            Составитель отзыва: <%= r.customer_name %>
+          </div>
+          <div>
+            Ресторан: <%= r.restaurant_name %>
+          </div>
+          <div>
+            Курьер доставки: <%= r.courier_name %>
+          </div>
+          <div>
+            Рейтинг: <%= r.rating %>
+          </div>
+          <div>
+            Комментарий: <%= r.comment %>
+          </div>
+          <div>
+            Дата составления <%= r.created_at %>
+          </div>
+        </li>
+        <% }) %>
+    </ul>

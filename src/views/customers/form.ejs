@@ -1,0 +1,13 @@
+<% layout('../layouts/main') -%>
+  <% block('title', "Клиент" ) -%>
+    <h1>
+      <%= customer.customer_id ? 'Редактировать' : 'Добавить' %> клиента
+    </h1>
+    <form action="<%= action %>" method="POST">
+      <label>Email: <input type="email" name="email" value="<%= customer.email || '' %>"></label><br>
+      <label>Имя: <input type="text" name="name" value="<%= customer.name || '' %>"></label><br>
+      <label>Телефон: <input type="text" name="phone" value="<%= customer.phone || '' %>"></label><br>
+      <label>Адрес: <input type="text" name="address" value="<%= customer.address || '' %>"></label><br>
+      <button type="submit">Сохранить</button>
+    </form>
+    <a href="/customers">Назад</a>

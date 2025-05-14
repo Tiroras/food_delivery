@@ -1,0 +1,23 @@
+<% layout('../layouts/list-layout') -%>
+  <% block('title', "Курьеры" ) -%>
+    <% block('h1', "Список курьеров" ) -%>
+      <% block('href', "couriers/add" ) -%>
+        <% block('link_text', "Добавить курьера" ) -%>
+          <ul>
+            <% couriers.forEach(courier=> { %>
+              <li>
+                <div>
+                  Имя: <%= courier.name %>
+                </div>
+                <div>
+                  Телефон: <%= courier.phone %>
+                </div>
+                <div>
+                  Транспорт: <%= courier.vehicle %>
+                </div>
+                <div>
+                  Дата найма: <%= courier.hired_at %>
+                </div>
+              </li>
+              <% }) %>
+          </ul>

@@ -1,0 +1,11 @@
+<% layout('../layouts/main') -%>
+  <% block('title', "Ресторан" ) -%>
+    <h1>
+      <%= restaurant.restaurant_id ? 'Редактировать' : 'Добавить' %> ресторан
+    </h1>
+    <form action="<%= action %>" method="POST">
+      <input name="name" value="<%= restaurant.name || '' %>" placeholder="Название" required><br>
+      <input name="address" value="<%= restaurant.address || '' %>" placeholder="Адрес" required><br>
+      <input name="phone" value="<%= restaurant.phone || '' %>" placeholder="Телефон" required><br>
+      <button type="submit">Сохранить</button>
+    </form>

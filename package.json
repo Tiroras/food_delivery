@@ -3,22 +3,39 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "ts-node-dev --respawn --transpile-only --exit-child -r tsconfig-paths/register src/server.ts"
   },
   "author": "Timur Gamkrelidze",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@prisma/client": "^6.7.0",
+    "connect-flash": "^0.1.1",
+    "dotenv": "^16.5.0",
     "ejs": "^3.1.10",
-    "express": "^5.1.0"
+    "ejs-locals": "^1.0.2",
+    "express": "^5.1.0",
+    "express-session": "^1.18.1",
+    "lodash-es": "^4.17.21",
+    "mysql2": "^3.14.1"
   },
   "devDependencies": {
+    "@eslint/js": "^9.26.0",
+    "@types/connect-flash": "^0.0.40",
     "@types/ejs": "^3.1.5",
+    "@types/ejs-locals": "^0.0.35",
     "@types/express": "^5.0.1",
+    "@types/express-session": "^1.18.1",
+    "@types/lodash-es": "^4.17.12",
     "@types/node": "^22.15.17",
+    "eslint": "^9.26.0",
+    "globals": "^16.1.0",
+    "mysql-schema-ts": "^1.9.1",
+    "prettier": "^3.5.3",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.32.1"
   }
 }
