@@ -16,7 +16,7 @@ const app = express();
 const PORT = 3000;
 app.engine("ejs", ejsLocals);
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '../public')));
 app.use(session({
   secret: process.env.SECRET || "",
   resave: false,

@@ -3,14 +3,15 @@
 
 <head>
   <meta charset="UTF-8">
+  <link rel="stylesheet" href="styles.css">
   <title>
     <%=blocks.title%>
   </title>
 </head>
 
-<body>
-  <header>
-    <nav>
+<body class="wrapper">
+  <header class="header">
+    <nav class="nav">
       <a href="/restaurants">Рестораны</a>
       <a href="/orders">Заказы</a>
       <a href="/customers">Клиенты</a>
@@ -19,7 +20,8 @@
       <a href="/reports">Отчеты</a>
     </nav>
   </header>
-  <%-body -%>
+  <main class="content">
+    <%-body -%>
+  </main>
 </body>
-
 </html>
