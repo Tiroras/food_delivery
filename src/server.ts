@@ -5,11 +5,14 @@ import path from "path";
 import session from "express-session";
 import flash from "connect-flash";
 import customersRouter from "./controllers/customers.controller";
-import ordersRouter from "./controllers/orders.controller"
-import restaurantsRouter from "./controllers/restaurants.controller"
-import couriersRouter from "./controllers/couriers.controller"
-import menuItemsRouter from "./controllers/menu-items.controller"
-import reviewsRouter from "./controllers/reviews.controller"
+import ordersRouter from "./controllers/orders.controller";
+import restaurantsRouter from "./controllers/restaurants.controller";
+import couriersRouter from "./controllers/couriers.controller";
+import menuItemsRouter from "./controllers/menu_items.controller";
+import reviewsRouter from "./controllers/reviews.controller";
+import menuCategoriesRouter from "./controllers/menu_categories.controller";
+import orderItemsRouter from "./controllers/order_items.controller";
+import menuItemCategoriesRouter from "./controllers/menu_item_categories.controller"
 import ejsLocals from "ejs-locals";
 
 const app = express();
@@ -29,8 +32,11 @@ app.use("/", customersRouter);
 app.use("/", restaurantsRouter);
 app.use("/", ordersRouter);
 app.use("/", couriersRouter);
-app.use("/", menuItemsRouter)
-app.use("/", reviewsRouter)
+app.use("/", menuItemsRouter);
+app.use("/", reviewsRouter);
+app.use("/", menuCategoriesRouter);
+app.use("/", orderItemsRouter);
+app.use("/", menuItemCategoriesRouter)
 app.get('/', (req, res) => res.redirect('/customers'));
 
 app.listen(PORT, () => {

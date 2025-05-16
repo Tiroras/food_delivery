@@ -4,14 +4,41 @@ import pool from "../bd"
 const router = Router();
 
 router.get('/orders', async (req, res) => {
-  const [orders] = await pool.query(`
-    SELECT o.*, c.name AS customer_name, r.name AS restaurant_name, cr.name AS courier_name
-    FROM orders o
-    JOIN customers c ON o.customer_id = c.customer_id
-    JOIN restaurants r ON o.restaurant_id = r.restaurant_id
-    LEFT JOIN couriers cr ON o.courier_id = cr.courier_id
-  `);
-  res.render('orders/list', { orders, messages: req.flash('info') });
+  const {
+    sortField, 
+    sortOrder 
+  } = req.query;
+
+  const [columns] = await pool.query("SHOW COLUMNS FROM orders");
+  const fields = (columns as Array<{ Field: string }>).map(column => column.Field)
+
+  let sql = 'SELECT * FROM orders WHERE 1=1';
+  const params: string[] = [];
+
+  Object.entries(req.query).forEach(item => {
+    if (
+      item[0] !== "sortField" && 
+      item[0] !== "sortOrder" && 
+      fields.includes(item[0]) &&
+      item[1]
+    ) {
+      sql += ` AND ${item[0]} LIKE ?`;
+      params.push(`%${item[1]}%`);
+    }
+  })
+
+  if (sortField) {
+    sql += ` ORDER BY ${sortField} ${sortOrder === 'desc' ? 'DESC' : 'ASC'}`;
+  }
+
+  const [orders] = await pool.query(sql, params);
+
+  res.render('orders/list', {
+    orders,
+    messages: req.flash('info'),
+    query: req.query,
+    columns: fields,
+  });
 });
 
 router.get('/orders/add', async (req, res) => {

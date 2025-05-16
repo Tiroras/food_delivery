@@ -4,20 +4,40 @@ import pool from "../bd";
 const router = Router();
 
 router.get('/couriers', async (req, res) => {
-  const { vehicle } = req.query;
-  let query = 'SELECT * FROM couriers';
-  const params = [];
+  const {
+    sortField, 
+    sortOrder 
+  } = req.query;
 
-  if (vehicle) {
-    query += ' WHERE vehicle = ?';
-    params.push(vehicle);
+  const [columns] = await pool.query("SHOW COLUMNS FROM couriers");
+  const fields = (columns as Array<{ Field: string }>).map(column => column.Field)
+
+  let sql = 'SELECT * FROM couriers WHERE 1=1';
+  const params: string[] = [];
+
+  Object.entries(req.query).forEach(item => {
+    if (
+      item[0] !== "sortField" && 
+      item[0] !== "sortOrder" && 
+      fields.includes(item[0]) &&
+      item[1]
+    ) {
+      sql += ` AND ${item[0]} LIKE ?`;
+      params.push(`%${item[1]}%`);
+    }
+  })
+
+  if (sortField) {
+    sql += ` ORDER BY ${sortField} ${sortOrder === 'desc' ? 'DESC' : 'ASC'}`;
   }
 
-  const [couriers] = await pool.query(query, params);
-  res.render('couriers/list', { 
-    couriers, 
-    vehicles: ['Велосипед', 'Авто', 'Скутер', 'Пешком'],
-    messages: req.flash('info') 
+  const [couriers] = await pool.query(sql, params);
+
+  res.render('couriers/list', {
+    couriers,
+    messages: req.flash('info'),
+    query: req.query,
+    columns: fields,
   });
 });
 

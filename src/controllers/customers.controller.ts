@@ -6,31 +6,29 @@ const router = Router();
 router.get('/customers', async (req, res) => {
   // Читаем параметры из query string
   const {
-    searchName,
-    searchEmail, 
-    filterPhone,
     sortField, 
     sortOrder 
   } = req.query;
 
+  const [columns] = await pool.query("SHOW COLUMNS FROM customers");
+  const fields = (columns as Array<{ Field: string }>).map(column => column.Field)
+
   let sql = 'SELECT * FROM customers WHERE 1=1';
-  const params = [];
+  const params: string[] = [];
 
-  if (searchName) {
-    sql += ' AND name LIKE ?';
-    params.push(`%${searchName}%`);
-  }
-  if (searchEmail) {
-    sql += ' AND email LIKE ?';
-    params.push(`%${searchEmail}%`);
-  }
-  if (filterPhone) {
-    sql += ' AND phone LIKE ?';
-    params.push(`%${filterPhone}%`);
-  }
+  Object.entries(req.query).forEach(item => {
+    if (
+      item[0] !== "sortField" && 
+      item[0] !== "sortOrder" && 
+      fields.includes(item[0]) &&
+      item[1]
+    ) {
+      sql += ` AND ${item[0]} LIKE ?`;
+      params.push(`%${item[1]}%`);
+    }
+  })
 
-  const allowedSort = ['name','email','phone','address','registered_at'];
-  if (sortField && allowedSort.includes(sortField.toString())) {
+  if (sortField) {
     sql += ` ORDER BY ${sortField} ${sortOrder === 'desc' ? 'DESC' : 'ASC'}`;
   }
 
@@ -39,6 +37,7 @@ router.get('/customers', async (req, res) => {
   res.render('customers/list', {
     customers,
     messages: req.flash('info'),
+    columns: fields,
     query: req.query
   });
 });

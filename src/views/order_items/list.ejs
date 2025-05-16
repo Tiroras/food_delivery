@@ -1,0 +1,10 @@
+<% layout('../layouts/list-layout') -%>
+<% block('title', "Позиции заказов" ) -%>
+<% block('h1', "Список позиций заказов" ) -%>
+<% block('hrefAdd', "/order_items/add" ) -%>
+<% block('linkAddText', "Добавить позицию заказа" ) -%>
+<% block('messages', messages) -%>
+<% block('data', order_items) -%>
+<% block('searchAction', "/order_items" ) -%>
+<% block('hrefReset', '/order_items' ) -%>
+<% block("columns", columns) -%>

@@ -4,44 +4,56 @@ import { ResultSetHeader } from "mysql2";
 
 const router = Router();
 
-router.get('/menu-items', async (req, res) => {
-  const { restaurant_id, available } = req.query;
-  let query = `
-    SELECT mi.*, r.name AS restaurant_name 
-    FROM menu_items mi
-    JOIN restaurants r ON mi.restaurant_id = r.restaurant_id
-  `;
-  const params = [];
+router.get('/menu_items', async (req, res) => {
+  const {
+    sortField, 
+    sortOrder 
+  } = req.query;
 
-  if (restaurant_id) {
-    query += ' WHERE mi.restaurant_id = ?';
-    params.push(restaurant_id);
+  const [columns] = await pool.query("SHOW COLUMNS FROM menu_items");
+  const fields = (columns as Array<{ Field: string }>).map(column => column.Field)
+
+  let sql = 'SELECT * FROM menu_items WHERE 1=1';
+  const params: string[] = [];
+
+  Object.entries(req.query).forEach(item => {
+    if (
+      item[0] !== "sortField" && 
+      item[0] !== "sortOrder" && 
+      fields.includes(item[0]) &&
+      item[1]
+    ) {
+      sql += ` AND ${item[0]} LIKE ?`;
+      params.push(`%${item[1]}%`);
+    }
+  })
+
+  if (sortField) {
+    sql += ` ORDER BY ${sortField} ${sortOrder === 'desc' ? 'DESC' : 'ASC'}`;
   }
 
-  if (available === 'true') query += ' AND mi.available = 1';
+  const [menuItems] = await pool.query(sql, params);
 
-  const [menuItems] = await pool.query(query, params);
-  const [restaurants] = await pool.query('SELECT * FROM restaurants');
-  
-  res.render('menu-items/list', { 
-    menuItems, 
-    restaurants,
-    messages: req.flash('info') 
+  res.render('menu_items/list', {
+    menuItems,
+    messages: req.flash('info'),
+    query: req.query,
+    columns: fields,
   });
 });
 
-router.get('/menu-items/add', async (req, res) => {
+router.get('/menu_items/add', async (req, res) => {
   const [restaurants] = await pool.query('SELECT * FROM restaurants');
   const [categories] = await pool.query('SELECT * FROM menu_categories');
-  res.render('menu-items/form', { 
+  res.render('menu_items/form', { 
     item: {}, 
     restaurants, 
     categories,
-    action: '/menu-items/add' 
+    action: '/menu_items/add' 
   });
 });
 
-router.post('/menu-items/add', async (req, res) => {
+router.post('/menu_items/add', async (req, res) => {
   const { restaurant_id, name, price, available, categories } = req.body;
   const connection = await pool.getConnection();
   
@@ -67,7 +79,7 @@ router.post('/menu-items/add', async (req, res) => {
     connection.release();
   }
   
-  res.redirect('/menu-items');
+  res.redirect('/menu_items');
 });
 
 export default router;

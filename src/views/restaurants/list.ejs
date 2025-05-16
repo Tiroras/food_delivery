@@ -1,22 +1,10 @@
-<% layout('../layouts/main') -%>
-  <% block('title', "Рестораны" ) -%>
-    <h1>Список ресторанов</h1>
-    <a href="/restaurants/add">Добавить ресторан</a>
-    <ul>
-      <% restaurants.forEach(r=> { %>
-        <li>
-          <strong>
-            <%= r.name %>
-          </strong> — <%= r.address %>, <%= r.phone %>
-              <form action="/restaurants/delete/<%= r.restaurant_id %>" method="POST" style="display:inline;">
-                <button>Удалить</button>
-              </form>
-              <a href="/restaurants/edit/<%= r.restaurant_id %>">Редактировать</a>
-        </li>
-        <% }); %>
-    </ul>
-    <% if (messages.length) { %>
-      <p>
-        <%= messages.join(', ') %>
-  </p>
-<% } %>
+<% layout('../layouts/list-layout') -%>
+<% block('title', "Рестораны" ) -%>
+<% block('h1', "Список ресторанов" ) -%>
+<% block('hrefAdd', "/restaurants/add" ) -%>
+<% block('linkAddText', "Добавить ресторан" ) -%>
+<% block('messages', messages) -%>
+<% block('data', restaurants) -%>
+<% block('searchAction', "/restaurants" ) -%>
+<% block('hrefReset', '/restaurants' ) -%>
+<% block("columns", columns) -%>

@@ -4,8 +4,41 @@ import pool from "../bd"
 const router = Router();
 
 router.get('/restaurants', async (req, res) => {
-  const [restaurants] = await pool.query('SELECT * FROM restaurants');
-  res.render('restaurants/list', { restaurants, messages: req.flash('info') });
+  const {
+    sortField, 
+    sortOrder 
+  } = req.query;
+
+  const [columns] = await pool.query("SHOW COLUMNS FROM restaurants");
+  const fields = (columns as Array<{ Field: string }>).map(column => column.Field)
+
+  let sql = 'SELECT * FROM restaurants WHERE 1=1';
+  const params: string[] = [];
+
+  Object.entries(req.query).forEach(item => {
+    if (
+      item[0] !== "sortField" && 
+      item[0] !== "sortOrder" && 
+      fields.includes(item[0]) &&
+      item[1]
+    ) {
+      sql += ` AND ${item[0]} LIKE ?`;
+      params.push(`%${item[1]}%`);
+    }
+  })
+
+  if (sortField) {
+    sql += ` ORDER BY ${sortField} ${sortOrder === 'desc' ? 'DESC' : 'ASC'}`;
+  }
+
+  const [restaurants] = await pool.query(sql, params);
+
+  res.render('restaurants/list', {
+    restaurants,
+    messages: req.flash('info'),
+    query: req.query,
+    columns: fields,
+  });
 });
 
 router.get('/restaurants/add', (req, res) => {
