@@ -1,0 +1,132 @@
+<% layout('../layouts/main') -%>
+<% block('title', 'Новый заказ с позициями') -%>
+
+<h1>Новый заказ</h1>
+<form class="form" action="<%= action %>" method="POST">
+  <div class="form_item">
+    <label>Клиент:</label>
+    <select name="customer_id" required>
+      <% customers.forEach(c => { %>
+        <option value="<%= c.customer_id %>"><%= c.name %></option>
+        <% }) %>
+      </select>
+  </div>
+  <div class="form_item">
+    <label>Ресторан:</label>
+    <select name="restaurant_id" required>
+      <% restaurants.forEach(r => { %>
+        <option value="<%= r.restaurant_id %>"><%= r.name %></option>
+        <% }) %>
+      </select>
+  </div>
+  <div class="form_item">
+    <label>Курьер:</label>
+    <select name="courier_id">
+      <option value="">—</option>
+      <% couriers.forEach(c => { %>
+        <option value="<%= c.courier_id %>"><%= c.name %></option>
+        <% }) %>
+      </select>
+  </div>
+  <div class="form_item">
+    <label>Статус:</label>
+    <select name="status">
+      <option value="New">New</option>
+      <option value="Preparing">Preparing</option>
+      <option value="OnWay">OnWay</option>
+      <option value="Delivered">Delivered</option>
+      <option value="Canceled">Canceled</option>
+    </select>
+  </div>
+  
+  <h2>Позиции заказа</h2>
+  <table id="itemsTable">
+    <thead>
+      <tr>
+        <th>Блюдо</th>
+        <th>Кол-во</th>
+        <th>Цена</th>
+        <th>Сумма</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <div>
+    <button class="btn" style="margin: 15px 0;" type="button" id="addItemBtn">Добавить позицию</button>
+  </div>
+
+  <!-- Сериализованные данные позиций -->
+  <input type="hidden" name="itemsJson" id="itemsJson">
+
+  <button class="btn" type="submit">Сохранить заказ</button>
+</form>
+<%
+const data = menuItems;
+%>
+<script>
+  // @ts-ignore
+  const menuItems = <%- JSON.stringify(data) %>;
+  const tbody = document.querySelector('#itemsTable tbody');
+  const addBtn = document.getElementById('addItemBtn');
+  const itemsJsonInput = document.getElementById('itemsJson');
+
+  function renderRow(item={item_id:'', quantity:1, price_each:0}) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>
+        <select class="item-select">
+          ${menuItems.map(mi => 
+            `<option value="${mi.item_id}" data-price="${mi.price}"
+              ${item.item_id==mi.item_id?'selected':''}>
+              ${mi.name}
+            </option>`).join('')}
+        </select>
+      </td>
+      <td><input type="number" class="item-qty" min="1" value="${item.quantity}"></td>
+      <td><span class="item-price">${item.price_each||menuItems[0].price}</span></td>
+      <td><span class="item-sum">${((item.quantity||1)*(item.price_each||menuItems[0].price)).toFixed(2)}</span></td>
+      <td>
+        <button type="button" class="del-btn">
+          <img src="/images/bin.svg" height="20" />
+        </button>
+      </td>
+    `;
+    // Обработчики
+    tr.querySelector('.item-select').onchange = e => {
+      const price = parseFloat(e.target.selectedOptions[0].dataset.price);
+      tr.querySelector('.item-price').textContent = price.toFixed(2);
+      updateSum(tr);
+      syncJson();
+    };
+    tr.querySelector('.item-qty').oninput = () => {
+      updateSum(tr);
+      syncJson();
+    };
+    tr.querySelector('.del-btn').onclick = () => {
+      tr.remove();
+      syncJson();
+    };
+    tbody.appendChild(tr);
+    syncJson();
+  }
+
+  function updateSum(tr) {
+    const qty = parseInt(tr.querySelector('.item-qty').value,10)||1;
+    const price = parseFloat(tr.querySelector('.item-price').textContent)||0;
+    tr.querySelector('.item-sum').textContent = (qty*price).toFixed(2);
+  }
+
+  function syncJson() {
+    const data = Array.from(tbody.querySelectorAll('tr')).map(tr=>({
+      item_id: parseInt(tr.querySelector('.item-select').value,10),
+      quantity: parseInt(tr.querySelector('.item-qty').value,10)||1,
+      price_each: parseFloat(tr.querySelector('.item-price').textContent)||0
+    }));
+    itemsJsonInput.value = JSON.stringify(data);
+  }
+
+  addBtn.onclick = () => renderRow();
+  // Добавим одну строку по умолчанию
+  renderRow();
+</script>

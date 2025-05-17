@@ -34,12 +34,13 @@
 <a class="btn addItem" href="<%=blocks.hrefAdd%>">
   <%=blocks.linkAddText%>
 </a>
+<%-body -%>
 <% if (blocks.data?.html?.[0]?.length) { %>
   <%
     const qs = (field) => {
       const q = {...query, sortField: field,
         sortOrder: query.sortField === field && query.sortOrder==='asc'
-        ? 'desc' : 'asc'
+          ? 'desc' : 'asc'
       };
       return Object.entries(q)
         .map(([k,v])=> `${k}=${encodeURIComponent(v)}`)
@@ -83,7 +84,7 @@
           <%})%>
           <% if (!blocks.hideEdit) { %>
             <td>
-              <a href="<%=blocks.searchAction%>/edit/<%= Object.values(item)[0] %>">Ред.</a>
+              <a class="editBtn" href="<%=blocks.searchAction%>/edit/<%= Object.values(item)[0] %>">Ред.</a>
             </td>
           <%}%>
           <td>
@@ -100,4 +101,3 @@
 <%} else {%>
 <div>Нет данных</div>
 <%}%>
-<%-body -%>

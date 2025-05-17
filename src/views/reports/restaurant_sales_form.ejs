@@ -1,6 +1,7 @@
 <% layout('../layouts/main') -%>
 <% block('title', 'Доходы по ресторанам') -%>
 
+<a class="btn" href="/reports">Назад</a>
 <h1>Отчет: Доходы по ресторанам</h1>
 <form class="form" action="/reports/restaurant-sales" method="POST">
   <div class="form_item">
@@ -10,6 +11,18 @@
   <div class="form_item">
     <label>Лимит строк:</label>
     <input type="number" name="limit" value="<%= query.limit || 10 %>">
+  </div>
+  <div class="form_item">
+    <label>Сортировка:</label>
+    <select name="sort_field">
+      <option value="total_sales"    <%= query.sort_field==='total_sales'   ? 'selected':'' %>>Выручка</option>
+      <option value="orders_count"   <%= query.sort_field==='orders_count'  ? 'selected':'' %>>Кол-во заказов</option>
+      <option value="restaurant_name"<%= query.sort_field==='restaurant_name'? 'selected':'' %>>Ресторан</option>
+    </select>
+    <select name="sort_order">
+      <option value="DESC" <%= query.sort_order!=='ASC'? 'selected':'' %>>По убыванию</option>
+      <option value="ASC"  <%= query.sort_order==='ASC'? 'selected':'' %>>По возрастанию</option>
+    </select>
   </div>
   <button class="btn" type="submit">Показать</button>
 </form>

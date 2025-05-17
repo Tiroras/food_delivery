@@ -1,8 +1,8 @@
 <% layout('../layouts/main') -%>
 <% block('title', 'Активность клиентов') -%>
 
+<a class="btn" href="/reports">Назад</a>
 <h1>Отчет: Активность клиентов</h1>
-
 <form class="form" action="/reports/customer-activity" method="POST">
   <div class="form_item">
     <label>Дата с:</label>
@@ -15,6 +15,18 @@
   <div class="form_item">
     <label>Мин. заказов:</label>
     <input type="number" name="min_orders" value="<%= query.min_orders || 1 %>">
+  </div>
+  <div class="form_item">
+    <label>Сортировка:</label>
+    <select name="sort_field">
+      <option value="total_spent"    <%= query.sort_field==='total_spent'   ? 'selected':'' %>>Сумма трат</option>
+      <option value="orders_count"   <%= query.sort_field==='orders_count'  ? 'selected':'' %>>Кол-во заказов</option>
+      <option value="customer_name"  <%= query.sort_field==='customer_name'? 'selected':'' %>>Клиент</option>
+    </select>
+    <select name="sort_order">
+      <option value="DESC" <%= query.sort_order!=='ASC'? 'selected':'' %>>По убыванию</option>
+      <option value="ASC"  <%= query.sort_order==='ASC'? 'selected':'' %>>По возрастанию</option>
+    </select>
   </div>
   <button class="btn" type="submit">Показать</button>
 </form>

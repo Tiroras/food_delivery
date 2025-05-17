@@ -89,4 +89,38 @@ router.post('/orders/delete/:id', async (req, res) => {
   res.redirect('/orders');
 });
 
+router.get("/orders/full-add", async (req, res) => {
+  const [customers]   = await pool.query("SELECT customer_id, name FROM customers");
+  const [restaurants]= await pool.query("SELECT restaurant_id, name FROM restaurants");
+  const [couriers]   = await pool.query("SELECT courier_id, name FROM couriers");
+  const [menuItems]  = await pool.query("SELECT item_id, name, price FROM menu_items WHERE available = 1");
+
+  res.render("orders/full_form", {
+    customers, restaurants, couriers, menuItems, action: "/orders/full-add"
+  });
+});
+router.post("/orders/full-add", async (req, res) => {
+  const { customer_id, restaurant_id, courier_id, status } = req.body;
+  const items = JSON.parse(req.body.itemsJson || "[]");
+
+  const [result] = await pool.query(
+    `INSERT INTO orders (customer_id, restaurant_id, courier_id, status)
+     VALUES (?, ?, ?, ?)`,
+    [customer_id, restaurant_id, courier_id || null, status]
+  );
+  const orderId = (result as any).insertId;
+
+  const insertValues = items.map(i => [ orderId, i.item_id, i.quantity, i.price_each ]);
+  if (insertValues.length) {
+    await pool.query(
+      `INSERT INTO order_items (order_id, item_id, quantity, price_each)
+       VALUES ?`,
+      [insertValues]
+    );
+  }
+
+  req.flash("info", "Заказ с позициями создан");
+  res.redirect("/orders");
+});
+
 export default router;

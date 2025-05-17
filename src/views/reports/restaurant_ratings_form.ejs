@@ -1,18 +1,23 @@
 <% layout('../layouts/main') -%>
 <% block('title', 'Средний рейтинг ресторанов') -%>
 
+<a class="btn" href="/reports">Назад</a>
 <h1>Отчет: Средний рейтинг ресторанов</h1>
-
 <form class="form" action="/reports/restaurant-ratings" method="POST">
   <div class="form_item">
     <label>Мин. отзывов:</label>
     <input type="number" name="min_reviews" value="<%= query.min_reviews || 1 %>">
   </div>
   <div class="form_item">
-    <label>Порядок сортировки:</label>
+    <label>Сортировка:</label>
+    <select name="sort_field">
+      <option value="avg_rating"      <%= query.sort_field==='avg_rating'     ? 'selected':'' %>>Средний рейтинг</option>
+      <option value="reviews_count"   <%= query.sort_field==='reviews_count'  ? 'selected':'' %>>Кол-во отзывов</option>
+      <option value="restaurant_name" <%= query.sort_field==='restaurant_name'? 'selected':'' %>>Ресторан</option>
+    </select>
     <select name="sort_order">
-      <option value="DESC" <%= query.sort_order === 'ASC' ? '' : 'selected' %>>По убыванию</option>
-      <option value="ASC"  <%= query.sort_order === 'ASC' ? 'selected' : '' %>>По возрастанию</option>
+      <option value="DESC" <%= query.sort_order!=='ASC'? 'selected':'' %>>По убыванию</option>
+      <option value="ASC"  <%= query.sort_order==='ASC'? 'selected':'' %>>По возрастанию</option>
     </select>
   </div>
   <button class="btn" type="submit">Показать</button>

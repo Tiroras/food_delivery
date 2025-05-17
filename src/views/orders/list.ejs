@@ -2,10 +2,11 @@
 <% block('title', "Заказы" ) -%>
 <% block('h1', "Список заказов" ) -%>
 <% block('hrefAdd', "/orders/add" ) -%>
-<% block('linkAddText', "Добавить заказ" ) -%>
+<% block('linkAddText', "Добавить элемент" ) -%>
 <% block('messages', messages) -%>
 <% block('data', orders) -%>
 <% block('searchAction', "/orders" ) -%>
 <% block('hrefReset', '/orders' ) -%>
 <% block("columns", columns) -%>
 <% block("tableName", tableName) -%>
+<a class="btn" href="/orders/full-add">Добавить заказ</a>
