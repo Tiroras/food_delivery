@@ -40,9 +40,18 @@
   gap: 15px;
 }
 
+.nav_list li {
+  font-weight: bold;
+}
+
+.nav_list li:hover {
+  text-decoration: underline;
+}
+
 .nav_additional {
   display: flex;
   align-items: center;
+  font-weight: bold;
 }
 
 .content {
@@ -241,19 +250,28 @@ textarea {
   }
   .nav_list li:hover {
     background-color: #72727E;
+    text-decoration: none;
+  }
+
+  .nav_list li:hover a {
+    color: white;
   }
 
   .nav_menu {
     position: relative;
-    cursor: pointer;
     height: 100%;
+    max-width: 300px;
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
   }
 
   .nav_btn {
     height: 100%;
+    cursor: pointer;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
   }
 
   .nav_menu:hover {
