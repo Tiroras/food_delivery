@@ -89,7 +89,7 @@
           <%}%>
           <td>
             <form action="<%=blocks.searchAction%>/delete/<%= Object.values(item)[0] %>" method="POST" style="display:inline">
-              <button class="deleteBtn" type="submit" onclick="return confirm(' Удалить клиента?')">
+              <button class="deleteBtn" type="submit" onclick="return confirm('Вы действительно желаете удалить элемент?')">
                 <img src="images/bin.svg" height="20" />
               </button>
             </form>
