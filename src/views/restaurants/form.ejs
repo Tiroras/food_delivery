@@ -1,11 +1,17 @@
-<% layout('../layouts/main') -%>
-  <% block('title', "Ресторан" ) -%>
-    <h1>
-      <%= restaurant.restaurant_id ? 'Редактировать' : 'Добавить' %> ресторан
-    </h1>
-    <form action="<%= action %>" method="POST">
-      <input name="name" value="<%= restaurant.name || '' %>" placeholder="Название" required><br>
-      <input name="address" value="<%= restaurant.address || '' %>" placeholder="Адрес" required><br>
-      <input name="phone" value="<%= restaurant.phone || '' %>" placeholder="Телефон" required><br>
-      <button type="submit">Сохранить</button>
-    </form>
+<% layout('../layouts/form-layout') -%>
+<% block('title', restaurant.restaurant_id ? 'Редактировать ресторан' : 'Добавить ресторан' ) -%>
+<form class="form" action="<%= action %>" method="POST">
+  <div class="form_item">
+    <label>Имя</label>
+    <input name="name" value="<%= restaurant.name || '' %>" placeholder="Название" required><br>
+  </div>
+  <div class="form_item">
+    <label>Адрес</label>
+    <input name="address" value="<%= restaurant.address || '' %>" placeholder="Адрес" required><br>
+  </div>
+  <div class="form_item">
+    <label>Телефон</label>
+    <input name="phone" value="<%= restaurant.phone || '' %>" placeholder="Телефон" required><br>
+  </div>
+  <button class="btn" type="submit">Сохранить</button>
+</form>

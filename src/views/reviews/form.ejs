@@ -1,0 +1,40 @@
+<% layout('../layouts/form-layout') -%>
+<% block('title', review.review_id ? 'Редактировать отзыв' : 'Добавить отзыв' ) -%>
+
+<form class="form" action="<%= action %>" method="POST">
+  <div class="form_item">
+    <label>Клиент:</label>
+    <select name="customer_id" required>
+      <% customers.forEach(c => { %>
+        <option value="<%= c.customer_id %>" <%= review.customer_id == c.customer_id ? 'selected' : '' %>><%= c.name %></option>
+        <% }) %>
+    </select>
+  </div>
+  <div class="form_item">
+    <label>Ресторан (необязательно):</label>
+    <select name="restaurant_id">
+      <option value="">—</option>
+      <% restaurants.forEach(r => { %>
+        <option value="<%= r.restaurant_id %>" <%= review.restaurant_id == r.restaurant_id ? 'selected' : '' %>><%= r.name %></option>
+      <% }) %>
+    </select>
+  </div>
+  <div class="form_item">
+    <label>Курьер (необязательно):</label>
+    <select name="courier_id">
+      <option value="">—</option>
+      <% couriers.forEach(c => { %>
+        <option value="<%= c.courier_id %>" <%= review.courier_id == c.courier_id ? 'selected' : '' %>><%= c.name %></option>
+      <% }) %>
+    </select>
+  </div>
+  <div class="form_item">
+    <label>Оценка (1–5):</label>
+    <input type="number" name="rating" min="1" max="5" required value="<%= review.rating || '' %>">
+  </div>
+  <div class="form_item">
+    <label>Комментарий:</label>
+    <textarea name="comment"><%= review.comment || '' %></textarea>
+  </div>
+  <button class="btn" type="submit">Сохранить</button>
+</form>

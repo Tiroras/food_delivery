@@ -1,0 +1,38 @@
+<% layout('../layouts/main') -%>
+<% block('title', 'Средний рейтинг ресторанов') -%>
+
+<h1>Отчет: Средний рейтинг ресторанов</h1>
+
+<form class="form" action="/reports/restaurant-ratings" method="POST">
+  <div class="form_item">
+    <label>Мин. отзывов:</label>
+    <input type="number" name="min_reviews" value="<%= query.min_reviews || 1 %>">
+  </div>
+  <div class="form_item">
+    <label>Порядок сортировки:</label>
+    <select name="sort_order">
+      <option value="DESC" <%= query.sort_order === 'ASC' ? '' : 'selected' %>>По убыванию</option>
+      <option value="ASC"  <%= query.sort_order === 'ASC' ? 'selected' : '' %>>По возрастанию</option>
+    </select>
+  </div>
+  <button class="btn" type="submit">Показать</button>
+</form>
+
+<% if (results) { %>
+  <table class="table report_table">
+    <thead>
+      <tr>
+        <th>Ресторан</th><th>Кол-во отзывов</th><th>Средний рейтинг</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% results.forEach(r => { %>
+        <tr>
+          <td><%= r.restaurant_name %></td>
+          <td><%= r.reviews_count %></td>
+          <td><%= r.avg_rating %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+<% } %>

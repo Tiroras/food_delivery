@@ -13,6 +13,7 @@ import reviewsRouter from "./controllers/reviews.controller";
 import menuCategoriesRouter from "./controllers/menu_categories.controller";
 import orderItemsRouter from "./controllers/order_items.controller";
 import menuItemCategoriesRouter from "./controllers/menu_item_categories.controller"
+import reportsRouter from "./controllers/reports.controller"
 import ejsLocals from "ejs-locals";
 
 const app = express();
@@ -36,7 +37,8 @@ app.use("/", menuItemsRouter);
 app.use("/", reviewsRouter);
 app.use("/", menuCategoriesRouter);
 app.use("/", orderItemsRouter);
-app.use("/", menuItemCategoriesRouter)
+app.use("/", menuItemCategoriesRouter);
+app.use("/", reportsRouter);
 app.get('/', (req, res) => res.redirect('/customers'));
 
 app.listen(PORT, () => {

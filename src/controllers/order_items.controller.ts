@@ -38,12 +38,15 @@ router.get('/order_items', async (req, res) => {
     messages: req.flash('info'),
     query: req.query,
     columns: fields,
+    tableName: "order_items"
   });
 });
 
 router.get('/order_items/add', async (req, res) => {
   const [orders] = await pool.query('SELECT order_id FROM orders');
   const [menuItems] = await pool.query('SELECT * FROM menu_items');
+  
+
   res.render('order_items/form', {
     item: {},
     orders,
@@ -73,7 +76,6 @@ router.get('/order_items/edit/:id', async (req, res) => {
     action: '/order_items/edit/' + req.params.id
   });
 });
-
 router.post('/order_items/edit/:id', async (req, res) => {
   const { order_id, item_id, quantity, price_each } = req.body;
   await pool.query(

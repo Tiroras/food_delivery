@@ -1,0 +1,20 @@
+
+<% layout('../layouts/form-layout') -%>
+<% block('title', category.category ? 'Редактировать категорию' : 'Добавить категорию' ) -%>
+<form action="<%= action %>" method="POST">
+  <div class="form_item">
+    <label>Название категории:</label>
+    <input type="text" name="name" required value="<%= category.name || '' %>">
+  </div>
+  <div class="form_item">
+    <label>Ресторан:</label>
+    <select name="restaurant_id" required>
+      <% restaurants.forEach(r => { %>
+        <option value="<%= r.restaurant_id %>" <%= category.restaurant_id == r.restaurant_id ? 'selected' : '' %>>
+          <%= r.name %>
+        </option>
+      <% }) %>
+    </select>
+  </div>
+  <button class="btn" type="submit">Сохранить</button>
+</form>

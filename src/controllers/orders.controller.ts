@@ -38,6 +38,7 @@ router.get('/orders', async (req, res) => {
     messages: req.flash('info'),
     query: req.query,
     columns: fields,
+    tableName: "orders"
   });
 });
 
@@ -64,7 +65,7 @@ router.get('/orders/edit/:id', async (req, res) => {
   const [couriers] = await pool.query('SELECT * FROM couriers');
 
   res.render('orders/form', {
-    order: orders[0],
+    order: orders[0][0],
     customers,
     restaurants,
     couriers,
@@ -73,10 +74,10 @@ router.get('/orders/edit/:id', async (req, res) => {
 });
 
 router.post('/orders/edit/:id', async (req, res) => {
-  const { customer_id, restaurant_id, courier_id, status } = req.body;
+  const { customer_id, restaurant_id, courier_id, status, order_date, total_amount, delivered_at } = req.body;
   await pool.query(
-    'UPDATE orders SET customer_id = ?, restaurant_id = ?, courier_id = ?, status = ? WHERE order_id = ?',
-    [customer_id, restaurant_id, courier_id || null, status, req.params.id]
+    'UPDATE orders SET customer_id = ?, restaurant_id = ?, courier_id = ?, status = ?, order_date = ?, total_amount = ?, delivered_at = ? WHERE order_id = ?',
+    [customer_id, restaurant_id, courier_id || null, status, order_date, total_amount, delivered_at, req.params.id]
   );
   req.flash('info', 'Заказ обновлён');
   res.redirect('/orders');

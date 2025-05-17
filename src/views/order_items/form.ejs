@@ -1,0 +1,35 @@
+
+<% layout('../layouts/form-layout') -%>
+<% block('title', title = item[0].order_item_id ? 'Редактировать позицию' : 'Добавить позицию в заказ' ) -%>
+<form class="form" action="<%= action %>" method="POST">
+  <div class="form_item">
+    <label>Заказ:</label>
+    <select name="order_id" required>
+      <% orders.forEach(order => { %>
+        <option value="<%= order.order_id %>" <%= item.order_id == order.order_id ? 'selected' : '' %>>
+          №<%= order.order_id %>
+        </option>
+      <% }) %>
+    </select>
+  </div>
+  <div class="form_item">
+    <label>Блюдо:</label>
+    <select name="item_id" required>
+      <% menuItems.forEach(mi => { %>
+        <option value="<%= mi.item_id %>" <%= item.item_id == mi.item_id ? 'selected' : '' %>>
+          <%= mi.name %>
+        </option>
+      <% }) %>
+    </select>
+  </div>
+  <div class="form_item">
+    <label>Количество:</label>
+    <input type="number" name="quantity" min="1" value="<%= item[0].quantity || 1 %>" required>
+   </div>
+  <div class="form_item">
+    <label>Цена за единицу (₽):</label>
+    <input type="number" name="price_each" step="0.01" min="0" value="<%= item[0].price_each || '' %>" required>
+  </div>
+
+  <button class="btn" type="submit">Сохранить</button>
+</form>

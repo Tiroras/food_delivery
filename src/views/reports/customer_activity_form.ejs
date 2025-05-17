@@ -1,0 +1,39 @@
+<% layout('../layouts/main') -%>
+<% block('title', 'Активность клиентов') -%>
+
+<h1>Отчет: Активность клиентов</h1>
+
+<form class="form" action="/reports/customer-activity" method="POST">
+  <div class="form_item">
+    <label>Дата с:</label>
+    <input type="date" name="date_from" value="<%= query.date_from || '' %>">
+  </div>
+  <div class="form_item">
+    <label>Дата по:</label>
+    <input type="date" name="date_to" value="<%= query.date_to || '' %>">
+  </div>
+  <div class="form_item">
+    <label>Мин. заказов:</label>
+    <input type="number" name="min_orders" value="<%= query.min_orders || 1 %>">
+  </div>
+  <button class="btn" type="submit">Показать</button>
+</form>
+
+<% if (results) { %>
+  <table class="table report_table">
+    <thead>
+      <tr>
+        <th>Клиент</th><th>Кол-во заказов</th><th>Сумма трат</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% results.forEach(r => { %>
+        <tr>
+          <td><%= r.customer_name %></td>
+          <td><%= r.orders_count %></td>
+          <td><%= r.total_spent %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+<% } %>

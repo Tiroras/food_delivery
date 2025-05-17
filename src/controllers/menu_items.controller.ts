@@ -1,6 +1,6 @@
 import { Router } from "express";
 import pool from "../bd";
-import { ResultSetHeader } from "mysql2";
+import { QueryResult } from "mysql2";
 
 const router = Router();
 
@@ -39,47 +39,55 @@ router.get('/menu_items', async (req, res) => {
     messages: req.flash('info'),
     query: req.query,
     columns: fields,
+    tableName: "menu_items"
   });
 });
 
-router.get('/menu_items/add', async (req, res) => {
-  const [restaurants] = await pool.query('SELECT * FROM restaurants');
-  const [categories] = await pool.query('SELECT * FROM menu_categories');
-  res.render('menu_items/form', { 
-    item: {}, 
-    restaurants, 
-    categories,
-    action: '/menu_items/add' 
+router.get("/menu_items/add", async (req, res) => {
+  const [restaurants] = await pool.query("SELECT * FROM restaurants");
+  res.render("menu_items/form", {
+    item: {},
+    restaurants,
+    action: "/menu_items/add"
   });
 });
 
-router.post('/menu_items/add', async (req, res) => {
-  const { restaurant_id, name, price, available, categories } = req.body;
-  const connection = await pool.getConnection();
-  
-  try {
-    await connection.beginTransaction();
-    const [result] = await connection.query<ResultSetHeader>(
-      'INSERT INTO menu_items (restaurant_id, name, price, available) VALUES (?, ?, ?, ?)',
-      [restaurant_id, name, price, available ? 1 : 0]
-    );
-    for (const category_id of categories) {
-      await connection.query(
-        'INSERT INTO menu_item_categories (item_id, category_id) VALUES (?, ?)',
-        [result.insertId, category_id]
-      );
-    }
+router.post("/menu_items/add", async (req, res) => {
+  const { restaurant_id, name, price, available } = req.body;
+  await pool.query(
+    "INSERT INTO menu_items (restaurant_id, name, price, available) VALUES (?, ?, ?, ?)",
+    [restaurant_id, name, price, available ? 1 : 0]
+  );
+  req.flash("info", "Блюдо добавлено");
+  res.redirect("/menu_items");
+});
 
-    await connection.commit();
-    req.flash('info', 'Пункт меню добавлен');
-  } catch (error) {
-    await connection.rollback();
-    req.flash('error', `Ошибка при создании; ${error}`);
-  } finally {
-    connection.release();
-  }
-  
-  res.redirect('/menu_items');
+router.get("/menu_items/edit/:id", async (req, res) => {
+  const [rows] = await pool.query("SELECT * FROM menu_items WHERE item_id = ?", [req.params.id]);
+  const data = rows as QueryResult[]
+  if (!data.length) return res.redirect("/menu_items");
+  const [restaurants] = await pool.query("SELECT * FROM restaurants");
+  res.render("menu_items/form", {
+    item: data[0],
+    restaurants,
+    action: "/menu_items/edit/" + req.params.id
+  });
+});
+
+router.post("/menu_items/edit/:id", async (req, res) => {
+  const { restaurant_id, name, price, available } = req.body;
+  await pool.query(
+    `UPDATE menu_items SET restaurant_id = ?, name = ?, price = ?, available = ? WHERE item_id = ?`,
+    [restaurant_id, name, price, available ? 1 : 0, req.params.id]
+  );
+  req.flash("info", "Блюдо обновлено");
+  res.redirect("/menu_items");
+});
+
+router.post("/menu_items/delete/:id", async (req, res) => {
+  await pool.query("DELETE FROM menu_items WHERE item_id = ?", [req.params.id]);
+  req.flash("info", "Блюдо удалено");
+  res.redirect("/menu_items");
 });
 
 export default router;

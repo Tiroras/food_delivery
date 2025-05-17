@@ -1,0 +1,33 @@
+<% layout('../layouts/main') -%>
+<% block('title', 'Доходы по ресторанам') -%>
+
+<h1>Отчет: Доходы по ресторанам</h1>
+<form class="form" action="/reports/restaurant-sales" method="POST">
+  <div class="form_item">
+    <label>Минимальная выручка:</label>
+    <input type="number" name="min_total" value="<%= query.min_total || 0 %>" step="0.01">
+  </div>
+  <div class="form_item">
+    <label>Лимит строк:</label>
+    <input type="number" name="limit" value="<%= query.limit || 10 %>">
+  </div>
+  <button class="btn" type="submit">Показать</button>
+</form>
+<% if (results) { %>
+  <table class="table report_table">
+    <thead>
+      <tr>
+        <th>Ресторан</th><th>Кол-во заказов</th><th>Выручка</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% results.forEach(r => { %>
+        <tr>
+          <td><%= r.restaurant_name %></td>
+          <td><%= r.orders_count %></td>
+          <td><%= r.total_sales %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+<% } %>

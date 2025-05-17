@@ -1,10 +1,10 @@
 import {Router} from "express"
 import pool from "../bd"
+import { QueryResult } from "mysql2";
 
 const router = Router();
 
 router.get('/customers', async (req, res) => {
-  // Читаем параметры из query string
   const {
     sortField, 
     sortOrder 
@@ -38,7 +38,8 @@ router.get('/customers', async (req, res) => {
     customers,
     messages: req.flash('info'),
     columns: fields,
-    query: req.query
+    query: req.query,
+    tableName: "customers"
   });
 });
 
@@ -54,9 +55,10 @@ router.post('/customers/add', async (req, res) => {
 });
 
 router.get('/customers/edit/:id', async (req, res) => {
-  const rows = await pool.query('SELECT * FROM customers WHERE customer_id = ?', [req.params.id]);
-  if (!rows.length) return res.redirect('/customers');
-  res.render('customers/form', { customer: rows[0], action: '/customers/edit/' + req.params.id });
+  const [rows] = await pool.query('SELECT * FROM customers WHERE customer_id = ?', [req.params.id]);
+  const data = rows as QueryResult[];
+  if (!data.length) return res.redirect('/customers');
+  res.render('customers/form', { customer: data[0], action: '/customers/edit/' + req.params.id });
 });
 
 router.post('/customers/edit/:id', async (req, res) => {

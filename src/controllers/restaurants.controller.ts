@@ -1,5 +1,6 @@
 import {Router} from "express"
 import pool from "../bd"
+import { QueryResult } from "mysql2";
 
 const router = Router();
 
@@ -38,6 +39,7 @@ router.get('/restaurants', async (req, res) => {
     messages: req.flash('info'),
     query: req.query,
     columns: fields,
+    tableName: "restaurants"
   });
 });
 
@@ -53,8 +55,9 @@ router.post('/restaurants/add', async (req, res) => {
 });
 
 router.get('/restaurants/edit/:id', async (req, res) => {
-  const rows = await pool.query('SELECT * FROM restaurants WHERE restaurant_id = ?', [req.params.id]);
-  if (!rows.length) return res.redirect('/restaurants');
+  const [rows] = await pool.query('SELECT * FROM restaurants WHERE restaurant_id = ?', [req.params.id]);
+  const data = rows as QueryResult[];
+  if (!data.length) return res.redirect('/restaurants');
   res.render('restaurants/form', { restaurant: rows[0], action: '/restaurants/edit/' + req.params.id });
 });
 

@@ -38,10 +38,9 @@ router.get('/menu_item_categories', async (req, res) => {
     messages: req.flash('info'),
     query: req.query,
     columns: fields,
+    tableName: "menu_item_categories"
   });
 });
-
-
 
 router.get('/menu_item_categories/add', async (req, res) => {
   const [items] = await pool.query('SELECT * FROM menu_items');

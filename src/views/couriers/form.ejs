@@ -1,0 +1,23 @@
+
+<% layout('../layouts/form-layout') -%>
+<% block('title', 'Создать курьера' ) -%>
+
+<form class="form" action="<%= action %>" method="POST">
+  <div class="form_item">
+    <label>Имя:</label>
+    <input type="text" name="name" required value="<%= courier.name || '' %>">
+  </div>
+  <div class="form_item">
+    <label>Телефон:</label>
+    <input type="text" name="phone" required value="<%= courier.phone || '' %>">
+  </div>
+  <div class="form_item">
+    <label>Транспорт:</label>
+    <input type="text" name="vehicle" required value="<%= courier.vehicle || '' %>">
+  </div>
+  <div class="form_item">
+    <label>Дата найма:</label>
+    <input type="date" name="hired_at" required value="<%= courier.hired_at ? courier.hired_at.toISOString().slice(0,10) : '' %>">
+  </div>
+  <button class="btn" type="submit">Сохранить</button>
+</form>

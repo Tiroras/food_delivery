@@ -1,5 +1,6 @@
 import { Router } from "express";
 import pool from "../bd";
+import { QueryResult } from "mysql2";
 
 const router = Router();
 
@@ -38,15 +39,12 @@ router.get('/couriers', async (req, res) => {
     messages: req.flash('info'),
     query: req.query,
     columns: fields,
+    tableName: "couriers"
   });
 });
 
 router.get('/couriers/add', (req, res) => {
-  res.render('couriers/form', { 
-    courier: {}, 
-    vehicles: ['Велосипед', 'Авто', 'Скутер', 'Пешком'],
-    action: '/couriers/add' 
-  });
+  res.render('couriers/form', { courier: {}, action: '/couriers/add' });
 });
 
 router.post('/couriers/add', async (req, res) => {
@@ -57,30 +55,30 @@ router.post('/couriers/add', async (req, res) => {
       [name, phone, vehicle, hired_at]
     );
     req.flash('info', 'Курьер добавлен');
-  } catch (error) {
-    req.flash('error', `Ошибка: номер телефона уже существует; ${error}`);
+  } catch (err) {
+    req.flash('info', `Ошибка: возможно, телефон уже существует; ${err}`);
   }
   res.redirect('/couriers');
 });
 
-
 router.get('/couriers/edit/:id', async (req, res) => {
-  const rows = await pool.query('SELECT * FROM couriers WHERE courier_id = ?', [req.params.id]);
-  if (!rows.length) return res.redirect('/couriers');
-  res.render('couriers/form', { 
-    courier: rows[0], 
-    vehicles: ['Велосипед', 'Авто', 'Скутер', 'Пешком'],
-    action: `/couriers/edit/${req.params.id}` 
-  });
+  const [rows] = await pool.query('SELECT * FROM couriers WHERE courier_id = ?', [req.params.id]);
+  const data = rows as QueryResult[];
+  if (!data.length) return res.redirect('/couriers');
+  res.render('couriers/form', { courier: data[0], action: '/couriers/edit/' + req.params.id });
 });
 
 router.post('/couriers/edit/:id', async (req, res) => {
   const { name, phone, vehicle, hired_at } = req.body;
-  await pool.query(
-    'UPDATE couriers SET name = ?, phone = ?, vehicle = ?, hired_at = ? WHERE courier_id = ?',
-    [name, phone, vehicle, hired_at, req.params.id]
-  );
-  req.flash('info', 'Данные курьера обновлены');
+  try {
+    await pool.query(
+      'UPDATE couriers SET name = ?, phone = ?, vehicle = ?, hired_at = ? WHERE courier_id = ?',
+      [name, phone, vehicle, hired_at, req.params.id]
+    );
+    req.flash('info', 'Курьер обновлён');
+  } catch (err) {
+    req.flash('info', `Ошибка обновления: возможно, дублируется телефон; ${err}`);
+  }
   res.redirect('/couriers');
 });
 
